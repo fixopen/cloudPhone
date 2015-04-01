@@ -5,7 +5,7 @@ trait NormalFacadeImpl
 
     private static function NormalInsert(array &$request)
     {
-        $data = self::ConvertBodyToObject($request['body']);
+        $data = self::ConvertBodyToArray($request['body']);
         if ($data) {
             $ids = array();
             foreach ($data as $item) {
@@ -110,6 +110,19 @@ trait NormalFacadeImpl
         $className = __CLASS__;
         $result = new $className;
         $result->FillSelf((array)$data);
+        return $result;
+    }
+
+    private static function ConvertBodyToArray($json)
+    {
+        $result = array();
+        $data = json_decode($json, true);
+        $className = __CLASS__;
+        foreach ($data as $datum) {
+            $item = new $className;
+            $item->FillSelf((array)$datum);
+            $result[] = $item;
+        }
         return $result;
     }
 

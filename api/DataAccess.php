@@ -55,6 +55,17 @@ trait DataAccess
         } else {
             $result .= $v;
         }
+        if (is_null($v)) {
+            $result = 'NULL';
+        } else {
+            switch ($type) {
+                case 'varchar':
+                case 'text':
+                case 'char':
+                    $result = "'" . $v . "'";
+                    break;
+            }
+        }
         return $result;
     }
 
@@ -62,9 +73,9 @@ trait DataAccess
         $result = array();
         self::GetTableType(self::$tableName);
         foreach (self::$types as $key => $typeName) {
-            if (array_key_exists($key, (array)$this)) {
+            //if (array_key_exists($key, (array)$this)) {
                 $result[self::Mark($key)] = self::DatabaseQuote($this->$key, $typeName);
-            }
+            //}
         }
         return $result;
     }
@@ -84,16 +95,20 @@ trait DataAccess
             if (array_key_exists($key, $row)) {
                 $type = self::GetTypeByName($key);
                 $value = $row[$key];
-                switch ($type) {
-                    case 'int2':
-                    case 'int4':
-                    case 'int8':
-                        $value = intval($value);
-                        break;
-                    default:
-                        break;
+                if (!is_string($value) && ($value == NULL)) {
+                    $this->$key = NULL;
+                } else {
+                    switch ($type) {
+                        case 'int2':
+                        case 'int4':
+                        case 'int8':
+                            $value = intval($value);
+                            break;
+                        default:
+                            break;
+                    }
+                    $this->$key = $value;
                 }
-                $this->$key = $value;
             }
         }
     }

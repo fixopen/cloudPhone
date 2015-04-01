@@ -22,7 +22,7 @@ class users
     private $photo = '';
     private $description = '';
     private $address = '';
-    private $zipCode = '';
+    private $zipcode = '';
     private $title = ''; //duty
     private $telephone = '';
     private $ext = '';
@@ -301,14 +301,14 @@ class users
         $this->address = $address;
     }
 
-    public function getZipCode()
+    public function getZipcode()
     {
-        return $this->zipCode;
+        return $this->zipcode;
     }
 
-    public function setZipCode($zipCode)
+    public function setZipcode($zipcode)
     {
-        $this->zipCode = $zipCode;
+        $this->zipcode = $zipcode;
     }
 
     public function getTitle()

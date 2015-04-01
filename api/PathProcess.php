@@ -10,24 +10,6 @@ trait PathProcess
         'prev' => 'prevProc',
         'next' => 'nextProc');
 
-    private function GetObjectChildrenProcess($child)
-    {
-        $result = FALSE;
-        $className = __CLASS__;
-        $class = new ReflectionClass($className);
-        if ($class->hasProperty('specSubresource')) {
-            if (array_key_exists($child, self::$specSubresource)) {
-                $result = self::$specSubresource[$child];
-            }
-        }
-        if (!$result) {
-            if (array_key_exists($child, self::$commonSubresource)) {
-                $result = self::$commonSubresource[$child];
-            }
-        }
-        return $result;
-    }
-
     public function ObjectChildrenProcess($child, array &$request)
     {
         //$count = count($request['paths']);
@@ -94,6 +76,10 @@ trait PathProcess
                     //batch update the bounds
                 }
                 break;
+            case 'PATCH':
+                $request['response']['code'] = 405; //Method Not Allowed
+                //$result['code'] = 406; //not acceptable
+                break;
             case 'GET':
                 if ($count == 1) {
                     //select one bounds
@@ -131,6 +117,10 @@ trait PathProcess
                     //batch update the notifications
                 }
                 break;
+            case 'PATCH':
+                $request['response']['code'] = 405; //Method Not Allowed
+                //$result['code'] = 406; //not acceptable
+                break;
             case 'GET':
                 if ($count == 1) {
                     //select one notifications
@@ -165,6 +155,10 @@ trait PathProcess
                     $request['response']['response']['code'] = 400; //bad request
                 }
                 break;
+            case 'PATCH':
+                $request['response']['code'] = 405; //Method Not Allowed
+                //$result['code'] = 406; //not acceptable
+                break;
             case 'GET':
                 $request['response']['code'] = 405; //Method Not Allowed
                 //$result['code'] = 406; //not acceptable
@@ -195,6 +189,10 @@ trait PathProcess
                 } else {
                     //batch update the objectBounds
                 }
+                break;
+            case 'PATCH':
+                $request['response']['code'] = 405; //Method Not Allowed
+                //$result['code'] = 406; //not acceptable
                 break;
             case 'GET':
                 if ($count == 1) {
@@ -227,6 +225,10 @@ trait PathProcess
                 $request['response']['code'] = 405; //Method Not Allowed
                 //$result['code'] = 406; //not acceptable
                 break;
+            case 'PATCH':
+                $request['response']['code'] = 405; //Method Not Allowed
+                //$result['code'] = 406; //not acceptable
+                break;
             case 'GET':
                 if ($count == 1) {
                     $r = self::SelectSlice($request['params']['filter'], $this->GetId(), 'prev', $request['paths'][0]);
@@ -256,6 +258,10 @@ trait PathProcess
                 $request['response']['code'] = 405; //Method Not Allowed
                 //$result['code'] = 406; //not acceptable
                 break;
+            case 'PATCH':
+                $request['response']['code'] = 405; //Method Not Allowed
+                //$result['code'] = 406; //not acceptable
+                break;
             case 'GET':
                 if ($count == 1) {
                     $r = self::SelectSlice($request['params']['filter'], $this->GetId(), 'next', $request['paths'][0]);
@@ -274,7 +280,8 @@ trait PathProcess
     }
 
     private static $classCommonSubresource = array('notifications' => 'commonNotificationsProc',
-        'statistics' => 'commonStatisticsProc');
+        'statistics' => 'commonStatisticsProc',
+        'byMap' => 'commonByMapProc');
 
     public static function GetClassChildrenProcess($classChild)
     {
@@ -294,20 +301,6 @@ trait PathProcess
         return $result;
     }
 
-    public static function ClassChildrenProcess($classChild, array &$request)
-    {
-        $className = __CLASS__;
-        $class = new ReflectionClass($className);
-        if ($class->hasProperty('classSpecSubresource')) {
-            if (array_key_exists($classChild, self::$classSpecSubresource)) {
-                call_user_func(self::$classSpecSubresource[$classChild], $request);
-            }
-        }
-        if (array_key_exists($classChild, self::$classCommonSubresource)) {
-            call_user_func(__CLASS__ . '::' . self::$classCommonSubresource[$classChild], $request);
-        }
-    }
-
     public static function commonNotificationProc(array &$request)
     {
         $count = count($request['paths']);
@@ -325,6 +318,10 @@ trait PathProcess
                 } else {
                     //batch update the notifications
                 }
+                break;
+            case 'PATCH':
+                $request['response']['code'] = 405; //Method Not Allowed
+                //$result['code'] = 406; //not acceptable
                 break;
             case 'GET':
                 if ($count == 1) {
@@ -373,6 +370,10 @@ trait PathProcess
                 $request['response']['code'] = 405; //Method Not Allowed
                 //$result['code'] = 406; //not acceptable
                 break;
+            case 'PATCH':
+                $request['response']['code'] = 405; //Method Not Allowed
+                //$result['code'] = 406; //not acceptable
+                break;
             case 'GET':
                 $calc = self::parseStatisticsInfo($request['paths']);
                 if ($calc['method'] != '') {
@@ -389,6 +390,42 @@ trait PathProcess
             case 'DELETE':
                 $request['response']['code'] = 405; //Method Not Allowed
                 //$result['code'] = 406; //not acceptable
+                break;
+            default:
+                break;
+        }
+    }
+
+    public static function commonByMapProc(array &$request)
+    {
+        switch ($request['method']) {
+            case 'POST':
+                $request['response']['code'] = 405; //Method Not Allowed
+                break;
+            case 'PUT':
+                $request['response']['code'] = 405; //Method Not Allowed
+                //$result['code'] = 406; //not acceptable
+                break;
+            case 'PATCH':
+                $request['response']['code'] = 405; //Method Not Allowed
+                //$result['code'] = 406; //not acceptable
+                break;
+            case 'GET':
+                //userId/userRoleMap/roleId/{roleId}
+                $request['response']['code'] = 404; //not found
+                $count = count($request['paths']);
+                if ($count == 4) {
+                    //$role = roles::GetOne('name', 'Administrator');
+                    //$roleId = $role->getId();
+                    $data = self::GetByMap($request['paths'][0], $request['paths'][1], $request['paths'][2], $request['paths'][3]);
+                    $request['response']['code'] = 200;
+                    $request['response']['body'] = self::ToArrayJson($data);
+                } else {
+                    $request['response']['code'] = 400; //bad request
+                }
+                break;
+            case 'DELETE': // == logout
+                $request['response']['code'] = 405; //Method Not Allowed
                 break;
             default:
                 break;

@@ -17,6 +17,7 @@ trait Facade
             $request['temp']['regionExpression'] = $regionExpression;
         } else {
             //only for login
+            $request['temp']['regionExpression'] = '1 = 1';
         }
 
         $request['temp']['parent'] = $parent;
@@ -50,7 +51,7 @@ trait Facade
                     break;
                 case 1:
                     $child = array_shift($request['paths']);
-                    $classChildrenProcess = self::GetGetClassChildrenProcess($child);
+                    $classChildrenProcess = self::GetClassChildrenProcess($child);
                     if ($classChildrenProcess) {
                         call_user_func(__CLASS__ . '::' . $classChildrenProcess, $request);
                     } else {
@@ -64,7 +65,7 @@ trait Facade
                         if ($childObject) {
                             switch ($request['method']) {
                                 case 'POST':
-                                    self::SingleUpdate($request, $child);
+                                    $request['response']['code'] = 400; //bad request, resource exist
                                     break;
                                 case 'PUT':
                                     self::SingleUpdate($request, $childObject);
@@ -82,7 +83,7 @@ trait Facade
                         } else {
                             switch ($request['method']) {
                                 case 'POST':
-                                    self::SingleUpdate($request, $child);
+                                    self::SingleInsert($request, $child);
                                     break;
                                 default:
                                     $request['response']['code'] = 404; //resource not found
@@ -105,7 +106,7 @@ trait Facade
                         $childObject->ObjectChildrenProcess($grandson, $request);
                     } else {
                         //print 'error';
-                        $classChildrenProcess = self::GetGetClassChildrenProcess($child);
+                        $classChildrenProcess = self::GetClassChildrenProcess($child);
                         if ($classChildrenProcess) {
                             call_user_func(__CLASS__ . '::' . $classChildrenProcess, $request);
                             //self::ClassChildrenProcess($child, $request);
