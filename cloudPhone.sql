@@ -318,6 +318,7 @@ CREATE TABLE record (
     "callId" bigint,
     "startTime" timestamp without time zone,
     duration interval,
+    "mediaId" bigint,
     filename character varying(128)
 );
 

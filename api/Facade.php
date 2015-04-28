@@ -164,12 +164,14 @@ trait Facade
                                             $length = $stopPos - $startPos + 1;
                                         }
                                     }
-
                                 }
                                 if ($offset != -1 && $length != -1) {
                                     $request['response']['body'] = $childObject->downloadSlice($offset, $length);
                                 } else {
-                                    $request['response']['body'] = $childObject->download();
+                                    $request['response']['headers']['Content-Type'] = $childObject->getMimeType();
+                                    $v = $childObject->download();
+                                    $request['response']['headers']['Content-Length'] = $v['length'];
+                                    $request['response']['body'] = $v['content'];
                                 }
                                 break;
                             case 'DELETE':

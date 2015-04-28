@@ -16,6 +16,7 @@ trait JSON
         } else if (is_bool($v)) {
             $result = $v ? 'true' : 'false';
         } else if (is_string($v)) {
+            $v = preg_replace('/\"/', '\\"', $v);
             $result = '"' . $v . '"';
         } else {
             $result .= $v;

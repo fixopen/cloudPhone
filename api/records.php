@@ -16,6 +16,7 @@ class records {
     private $_call = NULL;
     private $startTime = '';
     private $duration = '';
+    private $mediaId = NULL;
     private $filename = '';
 
     public function getCallId()
@@ -56,6 +57,16 @@ class records {
     public function setDuration($duration)
     {
         $this->duration = $duration;
+    }
+
+    public function getMediaId()
+    {
+        return $this->mediaId;
+    }
+
+    public function setMediaId($mediaId)
+    {
+        $this->mediaId = $mediaId;
     }
 
     public function getFilename()

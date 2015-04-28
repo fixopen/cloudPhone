@@ -36,7 +36,23 @@ class medias
 
     public function getContent()
     {
-        return $this->content;
+        $result = $this->content;
+        if (empty($result)) {
+            $base = 'C:/httpd-2.4.12-win64-VC11/Apache24/htdocs/cloudPhone/var/medias/';
+            $prefix = $base;
+            //$prefix = '/Library/WebServer/Documents/var/medias/';
+            $ext = '';
+            switch ($this->mimeType) {
+                case 'application/pdf':
+                    $ext = 'pdf';
+                    break;
+                case 'audio/mp3':
+                    $ext = 'mp3';
+                    break;
+            }
+            $result = $prefix . $this->getId() . '.' . $ext;
+        }
+        return $result;
     }
 
     public function setContent($content)

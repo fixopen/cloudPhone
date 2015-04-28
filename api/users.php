@@ -49,7 +49,11 @@ class users
             if ($key == 'password') {
                 continue;
             }
-            $fields[] = self::JsonMark($key) . ': ' . self::JsonQuote($value);
+            if ($key == 'devices') {
+                $fields[] = '"devices": ' . self::ToArrayJson($value);
+            } else {
+                $fields[] = self::JsonMark($key) . ': ' . self::JsonQuote($value);
+            }
         }
         return '{' . implode(', ', $fields) . '}';
     }
@@ -192,6 +196,7 @@ class users
                             $sessionId = $this->loginProcess();
                             $request['response']['cookies']['sessionId'] = $sessionId;
                             $request['response']['cookies']['token'] = 'onlyForTest';
+                            $this->devices = devices::CustomSelect(' WHERE ' . devices::ConstructNameValueFilter('userId', $this->getId()));
                             $request['response']['body'] = $this->toJson(); //'{"id": ' . $this->getId() . ', "sessionId": "' . $sessionId . '", "token": "onlyForTest"}';
                         } else {
                             $request['response']['code'] = 404; //invalidate username or password

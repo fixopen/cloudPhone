@@ -49,7 +49,7 @@ $_FILES['userfile']['error']
         //mime-type total-length file-name
         $uri = $this->getContent();
         //remove [scheme://host:port/path/]specPath/name.ext
-        $filename = basename($uri);
+        $filename = $uri; // basename($uri);
         $file = fopen($filename, 'wb');
         fwrite($file, $fileContent);
         fclose($file);
@@ -60,7 +60,7 @@ $_FILES['userfile']['error']
         //mime-type total-length file-name|file-uri start-position transfer-length
         $uri = $this->getContent();
         //remove [scheme://host:port/path/]specPath/name.ext
-        $filename = basename($uri);
+        $filename = $uri; // basename($uri);
         $file = fopen($filename, 'ab');
         fseek($file, $offset);
         fwrite($file, $fileContent, $count);
