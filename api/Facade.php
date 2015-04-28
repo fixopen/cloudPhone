@@ -22,8 +22,9 @@ trait Facade
 
         $request['temp']['parent'] = $parent;
 
-        $requestContentType = $request['headers']['Content-Type'];
-        if (strpos($requestContentType, 'application/json') == 0) {
+        //$requestContentType = $request['headers']['Content-Type'];
+        $acceptContentType = $request['headers']['Accept'];
+        if (strpos($acceptContentType, 'application/json') == 0) {
             //normal
             //filter & orderBy & offset & count
             $pathCount = count($request['paths']);
@@ -53,13 +54,13 @@ trait Facade
                     $child = array_shift($request['paths']);
                     $classChildrenProcess = self::GetClassChildrenProcess($child);
                     if ($classChildrenProcess) {
-                        call_user_func(__CLASS__ . '::' . $classChildrenProcess, $request);
+                        $request = call_user_func(__CLASS__ . '::' . $classChildrenProcess, $request);
                     } else {
                         $childObject = NULL;
                         if ($child == 'me') {
                             $childObject = $subject;
                         }
-                        if ($childObject) {
+                        if (!$childObject) {
                             $childObject = self::IsPrimaryKey($child);
                         }
                         if ($childObject) {
@@ -108,7 +109,7 @@ trait Facade
                         //print 'error';
                         $classChildrenProcess = self::GetClassChildrenProcess($child);
                         if ($classChildrenProcess) {
-                            call_user_func(__CLASS__ . '::' . $classChildrenProcess, $request);
+                            $request = call_user_func(__CLASS__ . '::' . $classChildrenProcess, $request);
                             //self::ClassChildrenProcess($child, $request);
                         } else {
                             $request['response']['code'] = 404; //resource not found

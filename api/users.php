@@ -34,7 +34,7 @@ class users
 
     private $login = '';
     private $password = '';
-    private $organizationId = 0;
+    private $organizationId = NULL;
 
     //积分
     //评分
@@ -239,6 +239,7 @@ class users
             default:
                 break;
         }
+        return $request;
     }
 
     public function getNo()

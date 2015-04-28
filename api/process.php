@@ -79,7 +79,7 @@ function error_function($error_level, $error_message, $error_file, $error_line, 
      */
 }
 
-function writeResponse($response)
+function writeResponse(&$response)
 {
     http_response_code($response['code']);
     foreach ($response['headers'] as $name => $value) {
@@ -92,18 +92,19 @@ function writeResponse($response)
     if (array_key_exists('sessionId', $response['cookies'])) {
         //session_start();
         //session_id($sessionId);
-        session_id($response['cookies']['sessionId']);
+        //session_id($response['cookies']['sessionId']);
         //print 'send cookie to client';
         $setCookiesHeaderValue = 'sessionId=' . $response['cookies']['sessionId'];
-        $r = setcookie('sessionId', $response['cookies']['sessionId']);
-        if ($r == FALSE) {
-            print 'sessionId cookie set fail.<br />';
-        }
-        $setCookiesHeaderValue .= ', token=' . $response['cookies']['token'];
-        $r = setcookie('token', $response['cookies']['token']);
-        if ($r == FALSE) {
-            print 'token cookie set fail.<br />';
-        }
+        //$r = setcookie('sessionId', $response['cookies']['sessionId']);
+        //if ($r == FALSE) {
+        //    print 'sessionId cookie set fail.<br />';
+        //}
+        $setCookiesHeaderValue .= "\r\n\t" . 'token=' . $response['cookies']['token'];
+        //$r = setcookie('token', $response['cookies']['token']);
+        //if ($r == FALSE) {
+        //    print 'token cookie set fail.<br />';
+        //}
+        //print 'Set-Cookie: ' . $setCookiesHeaderValue . '<br />';
         header('Set-Cookie: ' . $setCookiesHeaderValue);
         //print 'sessionId' . $response['cookies']['sessionId'];
         //print 'token' . $response['cookies']['token'];
@@ -113,9 +114,17 @@ function writeResponse($response)
     print $response['body'];
 }
 
+function testBed()
+{
+    //$m = new Model('nullTable', array('name', 'description'));
+    //$m->iteratorThis();
+    //var_dump($m);
+    //print 'hello, world<br />';
+}
+
 date_default_timezone_set('UTC');
-date_default_timezone_set("Asia/Chongqing");
-session_start();
+date_default_timezone_set("Asia/Shanghai");
+//session_start();
 
 set_error_handler("error_function", E_WARNING);
 
@@ -124,6 +133,7 @@ set_error_handler("error_function", E_WARNING);
 //《orderInfo》：{"fieldName": asc|desc, ...}
 //《n》：number
 $request = QueryParser::ParseQuery();
+testBed();
 $tableName = array_shift($request['paths']);
 $tableName::Process($request, NULL);
 writeResponse($request['response']);

@@ -141,6 +141,16 @@ trait DataAccess
         return implode(' AND ', $where);
     }
 
+    public static function ConstructNameValueFilter($name, $value)
+    {
+        return self::Mark($name) . ' = ' . self::DatabaseQuote($value, self::GetTypeByName($name));
+    }
+
+    public static function ConstructMapFilter($foreignName, $mapTable, $pairName, $pairValue)
+    {
+        return 'id IN ( SELECT ' . $foreignName . ' FROM ' . $mapTable . ' WHERE ' . $pairName . ' = ' . $pairValue . ' )';
+    }
+
     private static function ConvertJsonToOrderBy($orderBy)
     {
         $orders = array();
@@ -149,11 +159,6 @@ trait DataAccess
             $orders[] = self::Mark($key) . ' ' . strtoupper($value);
         }
         return implode(', ', $orders);
-    }
-
-    public static function IsPrimaryKey($v)
-    {
-        return self::GetOne('id', $v);
     }
 
     private static function GetOneData($query, $className) {
@@ -183,9 +188,9 @@ trait DataAccess
         return $result;
     }
 
-    public static function ConstructNameValueFilter($name, $value)
+    public static function IsPrimaryKey($v)
     {
-        return self::Mark($name) . ' = ' . self::DatabaseQuote($value, self::GetTypeByName($name));
+        return self::GetOne('id', $v);
     }
 
     public static function GetOne($name, $value)
@@ -215,13 +220,8 @@ trait DataAccess
             $pagedClause = ' LIMIT ' . $count . ' OFFSET ' . $offset;
         }
         $query = 'SELECT ' . implode(', ', self::GetMarkedColumnNames()) . ' FROM ' . self::Mark(self::$tableName) . $whereClause . $orderByClause . $pagedClause;
-        //print $query;
+        //print $query . '<br />';
         return self::GetData($query, __CLASS__);
-    }
-
-    public static function ConstructMapFilter($foreignName, $mapTable, $pairName, $pairValue)
-    {
-        return 'id IN ( SELECT ' . $foreignName . ' FROM ' . $mapTable . ' WHERE ' . $pairName . ' = ' . $pairValue . ' )';
     }
 
     public static function GetByMap($foreignName, $mapTable, $pairName, $pairValue)
@@ -246,6 +246,7 @@ trait DataAccess
         }
         $nameValues = $this->GetNameValues();
         $command = 'INSERT INTO ' . self::Mark(self::$tableName) . ' ( ' . implode(', ', array_keys($nameValues)) . ' ) VALUES ( ' . implode(', ', array_values($nameValues)) . ' )';
+        //print $command . '<br />';
         Database::GetInstance()->exec($command);
         //if (isset($seqName)) {
         //    $this->id = Database::GetInstance()->lastInsertId($seqName);

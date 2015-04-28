@@ -20,14 +20,14 @@ trait PathProcess
             if (array_key_exists($child, self::$specSubresource)) {
                 $processor = self::$specSubresource[$child];
                 //$this->$processor($request);
-                call_user_func(array($this, self::$specSubresource[$child]), $request);
+                $request = call_user_func(array($this, self::$specSubresource[$child]), $request);
             }
         }
         if (!$processor) {
             if (array_key_exists($child, self::$commonSubresource)) {
                 $processor = self::$specSubresource[$child];
                 //$this->$processor($request);
-                call_user_func(array($this, self::$commonSubresource[$child]), $request);
+                $request = call_user_func(array($this, self::$commonSubresource[$child]), $request);
             }
         }
     }

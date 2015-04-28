@@ -62,7 +62,7 @@ class QueryParser
             'paths' => $paths,
             'params' => $params,
             'cookies' => $_COOKIE,
-            'sessionInfo' => $_SESSION,
+            //'sessionInfo' => $_SESSION,
             'headers' => apache_request_headers(),
             //'headers' => http_get_request_headers(),
             'body' => $body,
