@@ -15,8 +15,8 @@ class devices
 
     private $no = ''; //sn
     private $name = ''; //telephoneNumber
-    private $groupId = 0;
-    private $userId = 0;
+    private $groupId = NULL;
+    private $userId = NULL;
     private $state = '';
     private $prefix = 0; //for IdGenerator
     private $description = '';
